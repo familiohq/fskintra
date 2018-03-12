@@ -407,7 +407,7 @@ class Message:
         msg['To'] = config.EMAIL
 
         # other tags just for ourselves
-        keys = 'mid,md5'.split(',')
+        keys = 'mid,md5,childname,title,date,time,sender,recipient,cc'.split(',')
         for key in keys:
             if self.mp.get(key, None):
                 kkey = 'X-skoleintra-%s' % key
