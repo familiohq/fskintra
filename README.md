@@ -93,6 +93,22 @@ filen i stedet for at køre --config igen.
 I $HOME/.skoleintra gemmes også alt hentet indhold og alle sendte
 emails.
 
+Docker
+------
+
+Bruger du Docker kan du lave et image af projektet vha
+
+    $ docker build -t fskintra .
+
+Derefter konfigurerer du vha
+
+    $ docker run -v .:/root/.skoleintra -t fskintra --config --rm
+
+Til sidst starter du dit image
+
+    $ docker run -v .:/root/.skoleintra --rm -e USERNAME= -e PASSWORD= -e HOSTNAME= -e SENDER= -e EMAIL= -e CACHEPREFIX= -e SMTPHOST= -e SMTPPORT= -e SMTPLOGIN= -e SMTPPASS= -t fskintra
+
+
 Cron-job
 --------
 
