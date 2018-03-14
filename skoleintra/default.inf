@@ -1,0 +1,11 @@
+[default]
+username=
+password=
+hostname=
+email=
+senderemail=
+smtpserver=
+smtpport=
+smtplogin=
+smtppassword=
+

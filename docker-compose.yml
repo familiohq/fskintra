@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  fskintra:
+    build:
+      context: .
+    environment:
+      - REDIS_HOST=
+      - REDIS_PORT=
+      - INTEGRATION_CHANNEL=
+      - EMAIL_CHANNEL=
+    volumes:
+      - ./:/usr/src/app

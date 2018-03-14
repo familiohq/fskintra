@@ -35,6 +35,9 @@ parser.add_option(
     '--config', dest='doconfig', default=False, action='store_true',
     help=u'Opsæt skoleintra')
 parser.add_option(
+    '--skip-config', dest='skipconfig', default=False, action='store_true',
+    help=u'Skip konfigurationsfilen')
+parser.add_option(
     '--skip-cache', dest='skipcache', default=False, action='store_true',
     help=u'Do not use previously cached files')
 parser.add_option(
@@ -56,7 +59,7 @@ if options.configfilename:
     TMP = os.path.expanduser(options.configfilename)
     if not os.path.samefile(CONFIG_FN, TMP):
         CONFIG_FN = TMP
-if not os.path.isfile(CONFIG_FN) and not options.doconfig:
+if not os.path.isfile(CONFIG_FN) and not options.doconfig and not options.skipconfig:
     parser.error(u'''Kan ikke finde konfigurationsfilen
 %s
 Kør først programmet med --config for at sætte det op.''' % CONFIG_FN)
@@ -171,7 +174,6 @@ if options.doconfig:
 cfg = ConfigParser.ConfigParser()
 cfg.read(DEFAULT_FN)
 cfg.read(CONFIG_FN)
-
 
 # Maybe write new password to CONFIG_FN
 if options.password is not None:
