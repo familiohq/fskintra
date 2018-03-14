@@ -3,8 +3,11 @@
 import config
 import surllib
 
-URL_PREFIX = 'http://%s/Infoweb/Fi2/' % config.HOSTNAME
-URL = URL_PREFIX + 'Faneblade.asp'
+def urlPrefix():
+    return 'http://%s/Infoweb/Fi2/' % config.HOSTNAME
+
+def url():
+    return '%sFaneblade.asp' % urlPrefix()
 
 NAMES_IGNORE = [u'Skolebestyrelsen', u'Kontaktforældre']
 
@@ -14,7 +17,7 @@ _children = None
 
 def skoleGetChildren():
     '''Returns of list of "available" children in the system'''
-    global URL, _children
+    global _children
 
     # ensure that we are logged in
     # surllib.skoleLogin() # done automatically later
@@ -22,7 +25,7 @@ def skoleGetChildren():
     config.log(u'Henter liste af børn')
 
     if not _children:
-        data = surllib.skoleGetURL(URL, asSoup=True, noCache=True)
+        data = surllib.skoleGetURL(url(), asSoup=True, noCache=True)
 
         _children = {}
         for a in data.findAll('a'):
@@ -39,14 +42,14 @@ def skoleGetChildren():
 
 
 def skoleSelectChild(name):
-    global _children, URL_PREFIX
+    global _children
     assert(name in _children)
 
     if name == config.CHILDNAME:
         config.log(u'[%s] er allerede valgt som barn' % name)
     else:
         config.log(u'Vælger [%s]' % name)
-        url = URL_PREFIX + _children[name]
+        url = urlPrefix() + _children[name]
         surllib.skoleGetURL(url, False, noCache=True)
         config.CHILDNAME = name
 

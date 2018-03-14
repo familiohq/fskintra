@@ -4,7 +4,8 @@ import config
 import surllib
 import semail
 
-URL_MAIN = 'http://%s/Infoweb/Fi/Klasselister.asp' % config.HOSTNAME
+def urlMain():
+    return 'http://%s/Infoweb/Fi/Klasselister.asp' % config.HOSTNAME
 
 # V1  = Navneliste
 # V3a = Afkrydsningsliste
@@ -21,11 +22,12 @@ LISTS_TO_SEND = 'V5', 'V6'
 
 def listsCheckList(postData, listtype):
     global bs, tbl
+
     # Fetch potential cached version
-    bs = surllib.skoleGetURL(URL_MAIN, True, False, True, postData)
+    bs = surllib.skoleGetURL(urlMain(), True, False, True, postData)
 
     if bs.cacheage > 6.9:
-        bs = surllib.skoleGetURL(URL_MAIN, True, True, True, postData)
+        bs = surllib.skoleGetURL(urlMain(), True, True, True, postData)
 
     tbl = bs.findAll('table')
     if len(str(tbl[2])) < 150:
@@ -58,7 +60,7 @@ def skoleContactLists():
     config.log(u'Kigger efter nye adresser')
 
     # read the initial page
-    bs = surllib.skoleGetURL(URL_MAIN, True, False, True)
+    bs = surllib.skoleGetURL(urlMain(), True, False, True)
 
     # Setup post request
     postData = {}

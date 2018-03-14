@@ -7,10 +7,14 @@ import semail
 import datetime
 import urllib
 
-URL_PREFIX = 'http://%s/Infoweb/Fi/Dokumentarkiv/' % config.HOSTNAME
-URL_MAIN = URL_PREFIX + 'Dokliste.asp'
-URL_DOC = URL_PREFIX + 'VisDokument.asp?Id='
+def urlPrefix():
+    return 'http://%s/Infoweb/Fi/Dokumentarkiv/' % config.HOSTNAME
 
+def urlMain():
+    return urlPrefix() + 'Dokliste.asp'
+
+def urlDoc():
+    return urlPrefix() + 'VisDokument.asp?Id='
 
 def docFindDocuments(bs, foldername='Dokumentarkiv'):
     '''Input beatifulsoup with content from a page of documents
@@ -41,7 +45,7 @@ def docFindDocuments(bs, foldername='Dokumentarkiv'):
         if m:
             url = m.group(2)
         elif 'visdokument' in url.lower():
-            url = URL_DOC + re.search('.*?(\d+)', links[0]['href']).group(1)
+            url = urlDoc() + re.search('.*?(\d+)', links[0]['href']).group(1)
         elif links[0].has_key('onclick') and 'visdok' in links[0]['onclick']:
             url = url  # href is actually the file url
         else:
@@ -58,7 +62,7 @@ def docFindDocuments(bs, foldername='Dokumentarkiv'):
             # this is a subfolder
 
             # first look at (potentially cached version)
-            suburl = URL_PREFIX + url
+            suburl = urlPrefix() + url
             subbs = surllib.skoleGetURL(suburl, True)
 
             subdate = datetime.date(*reversed(map(int, date.split('-'))))
@@ -93,7 +97,7 @@ def skoleDocuments():
     config.log(u'Kigger efter nye dokumenter')
 
     # read the initial page
-    bs = surllib.skoleGetURL(URL_MAIN, True, True)
+    bs = surllib.skoleGetURL(urlMain(), True, True)
     docFindDocuments(bs)
 
 if __name__ == '__main__':

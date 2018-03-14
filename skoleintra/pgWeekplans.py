@@ -5,8 +5,11 @@ import surllib
 import semail
 import urllib
 
-URL_PREFIX = 'http://%s/Infoweb/Fi/' % config.HOSTNAME
-URL_MAIN = URL_PREFIX + 'Ugeplaner.asp'
+def urlPrefix():
+    return 'http://%s/Infoweb/Fi/' % config.HOSTNAME
+
+def urlMain():
+    return urlPrefix() + 'Ugeplaner.asp'
 
 
 def wpTrimPlan(bs):
@@ -39,7 +42,7 @@ def wpFindWeekplans(bs):
         # find url
         url = links[0]['href']
         url = url.encode('iso-8859-1')
-        url = URL_PREFIX + urllib.quote(url, safe=':/?=&%')
+        url = urlPrefix() + urllib.quote(url, safe=':/?=&%')
 
         bs = surllib.skoleGetURL(url, True, True)
         bs = wpTrimPlan(bs)
@@ -57,7 +60,7 @@ def skoleWeekplans():
     config.log(u'Kigger efter nye ugeplaner')
 
     # read the initial page
-    bs = surllib.skoleGetURL(URL_MAIN, True, True)
+    bs = surllib.skoleGetURL(urlMain(), True, True)
     wpFindWeekplans(bs)
 
 if __name__ == '__main__':
