@@ -207,19 +207,19 @@ def softGet(cp, section, option):
         return ''
 
 try:
-    USERNAME = os.environ['USERNAME'] or cfg.get('default', 'username')
-    PASSWORD = os.environ['PASSWORD'] or cfg.get('default', 'password')
-    HOSTNAME = os.environ['HOSTNAME'] or cfg.get('default', 'hostname')
-    SENDER = os.environ['SENDER'] or cfg.get('default', 'senderemail')
-    EMAIL = os.environ['EMAIL'] or cfg.get('default', 'email')
+    USERNAME = cfg.get('default', 'username')
+    PASSWORD = cfg.get('default', 'password')
+    HOSTNAME = cfg.get('default', 'hostname')
+    SENDER = cfg.get('default', 'senderemail')
+    EMAIL = cfg.get('default', 'email')
     if options.configfilename:
-        CACHEPREFIX = os.environ['CACHEPREFIX'] or cfg.get('default', 'cacheprefix')
+        CACHEPREFIX = cfg.get('default', 'cacheprefix')
     else:
-        CACHEPREFIX = os.environ['CACHEPREFIX'] or ''
-    SMTPHOST = os.environ['SMTPHOST'] or softGet(cfg, 'default', 'smtpserver')
-    SMTPPORT = os.environ['SMTPPORT'] or softGet(cfg, 'default', 'smtpport')
-    SMTPLOGIN = os.environ['SMTPLOGIN'] or softGet(cfg, 'default', 'smtplogin')
-    SMTPPASS = os.environ['SMTPPASS'] or softGet(cfg, 'default', 'smtppassword')
+        CACHEPREFIX = ''
+    SMTPHOST = softGet(cfg, 'default', 'smtpserver')
+    SMTPPORT = softGet(cfg, 'default', 'smtpport')
+    SMTPLOGIN = softGet(cfg, 'default', 'smtplogin')
+    SMTPPASS = softGet(cfg, 'default', 'smtppassword')
 except ConfigParser.NoOptionError, e:
     parser.error(u'''Konfigurationsfilen '%s' mangler en indstilling for %s.
 Kør først programmet med --config for at sætte det op.
