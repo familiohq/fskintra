@@ -21,6 +21,9 @@ import urllib
 import urllib2
 import imghdr
 
+import redis
+import json
+
 import email
 from email import encoders
 from email.header import Header
@@ -427,20 +430,27 @@ class Message:
         config.log(u'Sender email %s' %
                    (self.mp['title'] if self.mp['title'] else self))
         msg = self.asEmail()
-        # open smtp connection
-        if config.SMTPHOST:
-            server = smtplib.SMTP(config.SMTPHOST, config.SMTPPORT)
+
+        if os.getenv('EMAIL_CHANNEL') is not None:
+            REDIS_HOST = os.environ['REDIS_HOST']
+            REDIS_PORT = os.environ['REDIS_PORT']
+            redisClient = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+            redisClient.publish(os.environ['EMAIL_CHANNEL'], json.dumps({ 'from': 'events@familiohq.com', 'message': msg.as_string() }))
         else:
-            server = smtplib.SMTP('localhost')
-        # server.set_debuglevel(1)
-        if config.SMTPLOGIN:
-            try:
-                server.starttls()
-            except smtplib.SMTPException:
-                pass  # ok, but we tried...
-            server.login(config.SMTPLOGIN, config.SMTPPASS)
-        server.sendmail(config.SENDER, config.EMAIL, msg.as_string())
-        server.quit()
+            # open smtp connection
+            if config.SMTPHOST:
+                server = smtplib.SMTP(config.SMTPHOST, config.SMTPPORT)
+            else:
+                server = smtplib.SMTP('localhost')
+            # server.set_debuglevel(1)
+            if config.SMTPLOGIN:
+                try:
+                    server.starttls()
+                except smtplib.SMTPException:
+                    pass  # ok, but we tried...
+                server.login(config.SMTPLOGIN, config.SMTPPASS)
+            server.sendmail(config.SENDER, config.EMAIL, msg.as_string())
+            server.quit()
 
         # ensure that we only send once
         self.store()
