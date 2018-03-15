@@ -7,7 +7,7 @@ services:
     environment:
       - REDIS_HOST=
       - REDIS_PORT=
-      - INTEGRATION_CHANNEL=
-      - EMAIL_CHANNEL=
+      - SUBSCRIBE_CHANNEL=
+      - PUBLISH_CHANNEL=
     volumes:
       - ./:/usr/src/app

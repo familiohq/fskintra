@@ -23,6 +23,8 @@ import imghdr
 
 import redis
 import json
+import sys
+import traceback
 
 import email
 from email import encoders
@@ -431,11 +433,29 @@ class Message:
                    (self.mp['title'] if self.mp['title'] else self))
         msg = self.asEmail()
 
-        if os.getenv('EMAIL_CHANNEL') is not None:
+        if os.getenv('PUBLISH_CHANNEL') is not None:
             REDIS_HOST = os.environ['REDIS_HOST']
             REDIS_PORT = os.environ['REDIS_PORT']
             redisClient = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-            redisClient.publish(os.environ['EMAIL_CHANNEL'], json.dumps({ 'from': 'events@familiohq.com', 'message': msg.as_string() }))
+            try:
+                redisClient.publish(os.environ['PUBLISH_CHANNEL'], json.dumps({
+                    'id': config.IDENTIFIER,
+                    'title': self.mp['title'],
+                    'date': self.mp['date'],
+                    'time': self.mp['time'],
+                    'sender': self.mp['sender'],
+                    'recipient': self.mp['recipient'],
+                    'cc': self.mp['cc'],
+                    'mid': self.mp['mid'],
+                    'type': self.mp['type'],
+                    'data': self.mp['data'],
+                    'childname': self.mp['childname'],
+                    'message': msg.as_string()
+                }))
+                    # 'phtml': self.mp['phtml'],
+            except:
+                print('E: failed to publish message to redis')
+                traceback.print_exc(file=sys.stdout)
         else:
             # open smtp connection
             if config.SMTPHOST:
