@@ -21,7 +21,6 @@ import urllib
 import urllib2
 import imghdr
 
-import redis
 import json
 import sys
 import traceback
