@@ -5,9 +5,7 @@ services:
     build:
       context: .
     environment:
-      - REDIS_HOST=
-      - REDIS_PORT=
-      - SUBSCRIBE_CHANNEL=
-      - PUBLISH_CHANNEL=
+      - PORT=
+      - CALLBACK_URL=
     volumes:
       - ./:/usr/src/app

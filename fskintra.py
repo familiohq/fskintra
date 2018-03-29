@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import redis
 import json
 import time
 import os
 import sys
 import traceback
+from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 import skoleintra.config
 import skoleintra.pgContactLists
@@ -15,6 +15,15 @@ import skoleintra.pgDocuments
 import skoleintra.pgFrontpage
 import skoleintra.pgWeekplans
 import skoleintra.schildren
+
+class NotificationServer(BaseHTTPRequestHandler):
+    def do_POST(self):
+        data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+        run(data['id'], data['username'], data['password'], data['hostname'])
+        self.send_response(200)
+        self.send_header('Content-type', 'text/plain')
+        self.end_headers()
+        self.wfile.write('OK')
 
 def run(identifier, username, password, hostname):
     skoleintra.config.IDENTIFIER = identifier
@@ -27,33 +36,20 @@ def run(identifier, username, password, hostname):
     for cname in cnames:
         skoleintra.schildren.skoleSelectChild(cname)
 
-        skoleintra.pgContactLists.skoleContactLists()
+        # skoleintra.pgContactLists.skoleContactLists()
         skoleintra.pgFrontpage.skoleFrontpage()
-        skoleintra.pgDialogue.skoleDialogue()
-        skoleintra.pgDocuments.skoleDocuments()
-        skoleintra.pgWeekplans.skoleWeekplans()
+        # skoleintra.pgDialogue.skoleDialogue()
+        # skoleintra.pgDocuments.skoleDocuments()
+        # skoleintra.pgWeekplans.skoleWeekplans()
 
-REDIS_HOST = os.environ['REDIS_HOST']
-REDIS_PORT = os.environ['REDIS_PORT']
-SUBSCRIBE_CHANNEL = os.environ['SUBSCRIBE_CHANNEL']
+    skoleintra.config.log(u'Afslutter kørsel for bruger %s' % username)
 
-redisClient = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-pubSub = redisClient.pubsub(ignore_subscribe_messages=True)
+PORT = int(os.environ['PORT'])
 
-pubSub.subscribe(SUBSCRIBE_CHANNEL)
-
-print 'listening on redis %s:%s/%s ... - ctrl+c to interrupt' % (REDIS_HOST, REDIS_PORT, SUBSCRIBE_CHANNEL)
+httpd = HTTPServer(('', PORT), NotificationServer)
+print 'Listening for notifications on port %s... (press ctrl+c to interrupt)' % PORT
 
 try:
-    while True:
-        message = pubSub.get_message()
-        if message:
-            try:
-                data = json.loads(message['data'])
-                run(data['id'], data['username'], data['password'], data['hostname'])
-            except:
-                print('E: failed running integration')
-                traceback.print_exc(file=sys.stdout)
-        time.sleep(0.001)
+    httpd.serve_forever()
 except KeyboardInterrupt:
     print("W: interrupt received, stopping…")

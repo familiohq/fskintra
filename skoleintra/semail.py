@@ -433,12 +433,11 @@ class Message:
                    (self.mp['title'] if self.mp['title'] else self))
         msg = self.asEmail()
 
-        if os.getenv('PUBLISH_CHANNEL') is not None:
-            REDIS_HOST = os.environ['REDIS_HOST']
-            REDIS_PORT = os.environ['REDIS_PORT']
-            redisClient = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+        if os.getenv('CALLBACK_URL') is not None:
             try:
-                redisClient.publish(os.environ['PUBLISH_CHANNEL'], json.dumps({
+                req = urllib2.Request(os.getenv('CALLBACK_URL'))
+                req.add_header('Content-Type','application/json')
+                data = json.dumps({
                     'id': config.IDENTIFIER,
                     'title': self.mp['title'],
                     'date': self.mp['date'],
@@ -450,11 +449,12 @@ class Message:
                     'type': self.mp['type'],
                     'data': self.mp['data'],
                     'childname': self.mp['childname'],
+                    'timestamp': msg['Date'],
                     'message': msg.as_string()
-                }))
-                    # 'phtml': self.mp['phtml'],
+                })
+                rsp = urllib2.urlopen(req, data)
             except:
-                print('E: failed to publish message to redis')
+                print('E: failed to publish message via http')
                 traceback.print_exc(file=sys.stdout)
         else:
             # open smtp connection

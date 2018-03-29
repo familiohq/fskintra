@@ -110,7 +110,8 @@ def skoleLogin():
         config.log(u'skoleLogin: Kan ikke logge på', 0)
         config.log(u'skoleLogin: Check at URLen %s er rigtig' % URL_LOGIN, 0)
         config.log(u'skoleLogIn: og prøv igen senere', 0)
-        sys.exit(0)
+        return
+        # sys.exit(0)
 
     config.log(u'skoleLogin: Brugernavn %s' % config.USERNAME, 2)
     try:
@@ -121,13 +122,15 @@ def skoleLogin():
             if [c for c in br.form.controls if c.name == 'UserName']:
                 config.log(u'skoleLogin: Den angivne hjemmeside er til skolens "nye skoleintra".'
                            u' Brug adressen til skolens "gamle skoleintraside".')
-                sys.exit(1)
+                return
+                # sys.exit(1)
         except mechanize._mechanize.FormNotFoundError:
             pass
         config.log(u'skoleLogin: Kan ikke logge på', 0)
         config.log(u'skoleLogin: Check at URLen %s er rigtig' % URL_LOGIN, 0)
         config.log(u'skoleLogIn: og prøv igen senere', 0)
-        sys.exit(1)
+        return
+        # sys.exit(1)
 
     br.form.set_all_readonly(False)
     cNames = [c.name for c in br.form.controls]
@@ -164,7 +167,8 @@ def skoleLogin():
                    u'kodeord? Check konfigurationsfilen, angiv evt. nyt '
                    u'kodeord med --password eller --config ELLER '
                    u'prøv igen senere...', -2)
-        sys.exit(256)
+        return
+        # sys.exit(256)
     # otherwise we ignore the response and assume that things are ok
 
     _skole_login_done = True
