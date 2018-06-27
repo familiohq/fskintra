@@ -20,12 +20,14 @@ def skoleGetChildren():
     global _children
 
     # ensure that we are logged in
-    # surllib.skoleLogin() # done automatically later
+    surllib.skoleLogin() # done automatically later
 
     config.log(u'Henter liste af børn')
 
     if not _children:
         data = surllib.skoleGetURL(url(), asSoup=True, noCache=True)
+        if not data:
+            return []
 
         _children = {}
         for a in data.findAll('a'):

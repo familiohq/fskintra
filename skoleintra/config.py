@@ -14,6 +14,7 @@ DEFAULT_FN = os.path.join(os.path.dirname(__file__), 'default.inf')
 CONFIG_FN = '~/.skoleintra/skoleintra.txt'
 # Name of current child
 CHILDNAME = ''
+IDENTIFIER = ''
 
 #
 # Parse command line options
@@ -93,7 +94,7 @@ def log(s, level=1):
     if type(level) != int:
         raise Exception(u'level must be an int, not %s' % repr(level))
     if level <= VERBOSE:
-        sys.stderr.write('%s\n' % s)
+        sys.stderr.write('%s: %s\n' % (IDENTIFIER, s))
         sys.stderr.flush()
 
 

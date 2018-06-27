@@ -238,16 +238,26 @@ def skoleGetURL(url, asSoup=False, noCache=False, perChild=True,
         if postData:
             msg += u' '+postData
         config.log(u'skoleGetURL: %s' % msg, 2)
-        skoleLogin()
-        br = getBrowser()
-        resp = br.open(qurl, postData)
-        data = resp.read()
-        # write to cache
-        ldn = os.path.dirname(lfn)
-        if not os.path.isdir(ldn):
-            os.makedirs(ldn)
-        open(lfn, 'wb').write(data)
-        config.log(u'skoleGetURL: Gemmer siden i filen %r' % lfn, 2)
+
+        if _skole_login_done:
+            br = getBrowser()
+            resp = br.open(qurl, postData)
+            data = resp.read()
+            # write to cache
+            ldn = os.path.dirname(lfn)
+            if not os.path.isdir(ldn):
+                os.makedirs(ldn)
+            open(lfn, 'wb').write(data)
+            config.log(u'skoleGetURL: Gemmer siden i filen %r' % lfn, 2)
+        else:
+            config.log(u'skoleGetURL: Afslutter da der ikke kunne logges ind', 1)
+            data = ''
+            if asSoup:
+                data = beautify(data)
+                data.cachedate = datetime.date.today()
+                return data
+            else:
+                return data
 
     if asSoup:
         data = beautify(data)

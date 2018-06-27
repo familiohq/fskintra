@@ -187,7 +187,7 @@ class Message:
 
         # create nice version of the raw html
         if 'nicehtml' not in self.mp:
-            self.mp['nicehtml'] = nicehtml(self.mp['data'])
+            self.mp['nicehtml'] = nicehtml(self.mp['data'] or '')
 
     def getMessageID(self):
         self.prepareMessage()
@@ -259,18 +259,66 @@ class Message:
         else:
             mpp['ttime'] = u''
 
-        # create initial HTML version
+        mpp['clean_sender'] = self.mp.get('sender', None)
+        mpp['clean_recipient'] = self.mp.get('recipient', None)
+        mpp['clean_cc'] = self.mp.get('cc', None)
+        mpp['clean_time'] = self.mp.get('date', None)
+        mpp['clean_title'] = self.mp.get('title', None)
+
+#         # create initial HTML version
+#         html = u'''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+# <html xmlns="http://www.w3.org/1999/xhtml">
+# <head>
+#   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+#   <title>%(title)s</title>
+# </head>
+# <body style='font-family: Verdana,Arial,Helvetica'>
+# <h1>%(title)s</h1>
+# <div class='meta' style='background-color: #eaeaea; color: #000; padding: 5px; margin: 0 0 10px 0;'>
+# %(sender)s%(recipient)s%(cc)s  <p class='date' style='margin: 0;'>Dato: %(date)s%(ttime)s</p>
+# </div>
+# <div class='text'>
+#   %(nicehtml)s
+# </div>
+# </body>
+# </html>
+# '''
         html = u'''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-  <title>%(title)s</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>%(title)s</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <style type="text/css">body, span, div, p, ul, b, strong { font-family: 'ClanOT-NarrowBook', 'Roboto', sans-serif !important; }</style>
+    <script type="application/ld+json">
+    {
+        "@context": "http://schema.org/",
+        "@type": "EmailMessage",
+        "sender": {
+            "@type": "Person",
+            "name": "%(clean_sender)s",
+            "email": "%(clean_sender)s"
+        },
+        "toRecipient": {
+            "@type": "Person",
+            "name": "%(clean_recipient)s",
+            "email": "%(clean_recipient)s"
+        },
+        "ccRecipient": {
+            "@type": "Person",
+            "name": "%(clean_cc)s",
+            "email": "%(clean_cc)s"
+        },
+        "about": {
+            "@type": "Thing",
+            "name": "%(clean_title)s"
+        },
+        "dateSent": "%(clean_time)s"
+    }
+    </script>
 </head>
-<body style='font-family: Verdana,Arial,Helvetica'>
-<h1>%(title)s</h1>
-<div class='meta' style='background-color: #eaeaea; color: #000; padding: 5px; margin: 0 0 10px 0;'>
-%(sender)s%(recipient)s%(cc)s  <p class='date' style='margin: 0;'>Dato: %(date)s%(ttime)s</p>
-</div>
+<body>
 <div class='text'>
   %(nicehtml)s
 </div>
@@ -421,9 +469,9 @@ class Message:
         return msg
 
     def maybeSend(self):
-        if self.hasBeenSent():
-            config.log(u'Hopper tidligere sendt besked over: %s' % self, 2)
-            return False
+        # if self.hasBeenSent():
+        #     config.log(u'Hopper tidligere sendt besked over: %s' % self, 2)
+        #     return False
         self.send()
         return True
 

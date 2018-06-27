@@ -21,9 +21,9 @@ class NotificationServer(BaseHTTPRequestHandler):
         data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
         run(data['id'], data['username'], data['password'], data['hostname'])
         self.send_response(200)
-        self.send_header('Content-type', 'text/plain')
+        self.send_header('Content-type', 'application/json')
         self.end_headers()
-        self.wfile.write('OK')
+        self.wfile.write('{ "foo": "bar" }')
 
 def run(identifier, username, password, hostname):
     skoleintra.config.IDENTIFIER = identifier
@@ -37,8 +37,8 @@ def run(identifier, username, password, hostname):
         skoleintra.schildren.skoleSelectChild(cname)
 
         # skoleintra.pgContactLists.skoleContactLists()
-        skoleintra.pgFrontpage.skoleFrontpage()
-        # skoleintra.pgDialogue.skoleDialogue()
+        # skoleintra.pgFrontpage.skoleFrontpage()
+        skoleintra.pgDialogue.skoleDialogue()
         # skoleintra.pgDocuments.skoleDocuments()
         # skoleintra.pgWeekplans.skoleWeekplans()
 
