@@ -19,6 +19,12 @@ def skoleGetChildren():
     '''Returns of list of "available" children in the system'''
     global _children
 
+    # reset list of children
+    _children = None
+
+    # reset login
+    surllib.resetSkoleLogin()
+
     # ensure that we are logged in
     surllib.skoleLogin() # done automatically later
 

@@ -93,7 +93,7 @@ def docFindDocuments(bs, foldername='Dokumentarkiv'):
 def skoleDocuments():
     global bs
 
-    # surllib.skoleLogin()
+    surllib.skoleLogin()
     config.log(u'Kigger efter nye dokumenter')
 
     # read the initial page

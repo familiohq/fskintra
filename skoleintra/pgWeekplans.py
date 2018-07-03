@@ -56,7 +56,7 @@ def wpFindWeekplans(bs):
 def skoleWeekplans():
     global bs
 
-    # surllib.skoleLogin()
+    surllib.skoleLogin()
     config.log(u'Kigger efter nye ugeplaner')
 
     # read the initial page

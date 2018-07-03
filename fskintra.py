@@ -32,6 +32,8 @@ def run(identifier, username, password, hostname):
     skoleintra.config.HOSTNAME = hostname
     skoleintra.config.CACHEPREFIX = '%s-%s' % (username, hostname)
 
+    # skoleintra.config.SKIP_CACHE = True
+
     cnames = skoleintra.schildren.skoleGetChildren()
     for cname in cnames:
         skoleintra.schildren.skoleSelectChild(cname)

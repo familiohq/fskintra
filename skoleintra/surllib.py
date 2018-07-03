@@ -78,6 +78,9 @@ def getBrowser():
 
 _skole_login_done = False
 
+def resetSkoleLogin():
+    global _skole_login_done
+    _skole_login_done = False
 
 def skoleLogin():
     global br, resp
@@ -175,13 +178,14 @@ def skoleLogin():
 
 
 def url2cacheFileName(url, perChild, postData):
+    cacheDn = config.getCacheDn()
     assert(type(url) == str)
     if perChild:
         url += '&CHILDNAME=' + unienc(config.CHILDNAME)
     if postData:
         url += postData
     up = urlparse.urlparse(url)
-    parts = [config.CACHE_DN,
+    parts = [cacheDn,
              up.scheme,
              up.netloc,
              urllib.url2pathname(up.path)[1:]]
@@ -232,9 +236,9 @@ def skoleGetURL(url, asSoup=False, noCache=False, perChild=True,
         data = open(lfn, 'rb').read()
     else:
         qurl = urllib.quote(url, safe=':/?=&%')
-        msg = u'Prøver at hente %s' % qurl
+        msg = u'Fetching %s' % qurl
         if perChild:
-            msg += u' child='+config.CHILDNAME
+            msg += u' (child: ' + config.CHILDNAME + ')'
         if postData:
             msg += u' '+postData
         config.log(u'skoleGetURL: %s' % msg, 2)

@@ -228,6 +228,15 @@ except ConfigParser.NoOptionError, e:
 Kør først programmet med --config for at sætte det op.
 Eller ret direkte i '%s'.''' % (CONFIG_FN, e.option, CONFIG_FN))
 
+def getCacheDn():
+    # setup cache and msg directories, and ensure that they exist
+    CACHE_DN = os.path.join(ROOT, CACHEPREFIX + 'cache')
+    MSG_DN = os.path.join(ROOT, CACHEPREFIX + 'msg')
+    for dn in (CACHE_DN, MSG_DN):
+        if not os.path.isdir(dn):
+            os.makedirs(dn)
+    return CACHE_DN
+
 # setup cache and msg directories, and ensure that they exist
 CACHE_DN = os.path.join(ROOT, CACHEPREFIX + 'cache')
 MSG_DN = os.path.join(ROOT, CACHEPREFIX + 'msg')
