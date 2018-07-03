@@ -8,4 +8,7 @@ services:
       - PORT=
       - CALLBACK_URL=
     volumes:
-      - ./:/usr/src/app
+      - cache:/usr/src/app
+
+volumes:
+  cache:
